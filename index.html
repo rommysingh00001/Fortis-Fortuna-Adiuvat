@@ -3,58 +3,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DBBA Betting + Streak Matching Preview</title>
+<title>DBBA Casino Betting</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body { background:#050816; color:white; font-family:'Segoe UI', sans-serif; }
-.card { background:#111; border-radius:12px; padding:15px; margin:10px 0; box-shadow:0 2px 10px rgba(0,0,0,0.5); }
-.btn { background:#f59e0b; color:#111; padding:8px 16px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
-.btn:hover { background:#d97706; }
-select, input { background:#222; color:white; border:none; border-radius:6px; padding:8px; font-family:monospace; }
+body { 
+  background: radial-gradient(circle, #0f0c29, #302b63, #24243e);
+  color:white; 
+  font-family:'Segoe UI', sans-serif; 
+}
+.card { 
+  background: rgba(0,0,0,0.7); 
+  border-radius:12px; 
+  padding:20px; 
+  margin:15px 0; 
+  box-shadow:0 0 20px rgba(255,255,255,0.2); 
+  backdrop-filter: blur(8px);
+}
+.btn { 
+  background: linear-gradient(90deg,#f59e0b,#fbbf24); 
+  color:#111; 
+  padding:10px 20px; 
+  border:none; 
+  border-radius:10px; 
+  cursor:pointer; 
+  font-weight:bold; 
+  font-size:1.1rem;
+  transition: transform 0.2s;
+}
+.btn:hover { transform: scale(1.05); background: linear-gradient(90deg,#fbbf24,#f59e0b); }
+select, input { 
+  background:#222; 
+  color:white; 
+  border:none; 
+  border-radius:8px; 
+  padding:10px; 
+  font-family:monospace; 
+  font-size:1.1rem;
+}
+h1,h2 { text-shadow: 0 0 8px #f59e0b; }
+#result-display { font-size:2.5rem; letter-spacing:5px; text-shadow: 0 0 15px #f59e0b; }
 </style>
 </head>
 <body class="p-6">
 
-<h1 class="text-3xl font-bold mb-6 text-center">DBBA Betting + Streak Preview</h1>
+<h1 class="text-4xl font-bold text-center mb-6">🎰 DBBA Casino Betting 🎰</h1>
 
 <!-- Bet Amount -->
 <div class="card">
-  <h2 class="text-xl font-semibold mb-2">Set Your Bet Amount</h2>
+  <h2 class="text-2xl font-bold mb-2">Set Your Bet Amount</h2>
   <input type="number" id="bet-amount" placeholder="Enter amount for each bet" min="1">
 </div>
 
 <!-- Bets Selection -->
 <div class="card">
-  <h2 class="text-xl font-semibold mb-2">Choose 10 Bets (0-9 digits)</h2>
+  <h2 class="text-2xl font-bold mb-3">Choose 10 Bets (Digits 0-9)</h2>
   <div id="bet-container" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
 </div>
 
 <!-- Place Bets -->
 <div class="card">
-  <button id="place-bets" class="btn w-full">Place All Bets</button>
-  <div id="bet-status" class="mt-2 text-yellow-400 font-bold"></div>
+  <button id="place-bets" class="btn w-full mb-2">Place All Bets</button>
+  <div id="bet-status" class="text-yellow-400 font-bold text-lg"></div>
 </div>
 
 <!-- User Bets Dashboard -->
 <div class="card mt-4">
-  <h2 class="text-xl font-semibold mb-2">Your Bets & Multiplier</h2>
+  <h2 class="text-2xl font-bold mb-2">Your Bets & Multipliers</h2>
   <div id="user-bets" class="flex flex-col gap-2"></div>
 </div>
 
 <!-- Result Reveal -->
 <div class="card mt-4">
-  <h2 class="text-xl font-semibold mb-2">Live Result Reveal</h2>
-  <div id="result-display" class="text-2xl font-mono text-yellow-400">-</div>
+  <h2 class="text-2xl font-bold mb-2">Live Result Reveal</h2>
+  <div id="result-display">-</div>
 </div>
 
 <!-- Final Winnings -->
 <div class="card mt-4">
-  <h2 class="text-xl font-semibold mb-2">Final Winnings</h2>
+  <h2 class="text-2xl font-bold mb-2">Final Winnings</h2>
   <div id="final-winnings" class="text-xl font-bold text-green-400">-</div>
 </div>
 
 <script>
-// Generate 10 select inputs for 10 bets
+// --- Generate 10 Select Inputs ---
 const betContainer = document.getElementById('bet-container');
 const betInputs = [];
 for(let i=1;i<=10;i++){
@@ -70,32 +101,32 @@ for(let i=1;i<=10;i++){
   betInputs.push(sel);
 }
 
-// Store placed bets
+// --- Store User Bets ---
 let userBets = [];
 
-// Check Betting Open (12 AM – 2 PM IST)
+// --- Betting Time Check (12AM-2PM IST) ---
 function isBettingOpen(){
   const now = new Date();
-  const utcOffset = 5.5*60; // IST = UTC +5:30
+  const utcOffset = 5.5*60; // IST +5:30
   const istMinutes = now.getUTCMinutes() + now.getUTCHours()*60 + utcOffset;
   const istHours = Math.floor(istMinutes / 60) % 24;
-  return istHours >= 0 && istHours < 14; // 0-14 hrs = 12AM-2PM
+  return istHours >=0 && istHours <14; // 0-14 = 12AM-2PM
 }
 
-// Place Bets
+// --- Place Bets ---
 document.getElementById('place-bets').addEventListener('click', ()=>{
-  if(!isBettingOpen()){
-    document.getElementById('bet-status').innerText = "Betting Closed!";
-    return;
+  if(!isBettingOpen()){ 
+    document.getElementById('bet-status').innerText = "⚠ Betting Closed!"; 
+    return; 
   }
   const amount = parseInt(document.getElementById('bet-amount').value);
-  if(isNaN(amount) || amount<=0){ alert("Enter valid bet amount"); return; }
+  if(isNaN(amount)||amount<=0){ alert("Enter valid bet amount"); return; }
   userBets = betInputs.map((sel,i)=>({betNumber:sel.value, amount, betNo:i+1, maxStreak:0, reward:0}));
   updateDashboard();
-  document.getElementById('bet-status').innerText = "Bets Placed Successfully!";
+  document.getElementById('bet-status').innerText = "✅ Bets Placed!";
 });
 
-// Update User Dashboard
+// --- Update User Dashboard ---
 function updateDashboard(){
   const container = document.getElementById('user-bets');
   container.innerHTML = '';
@@ -108,15 +139,15 @@ function updateDashboard(){
   });
 }
 
-// Reward function
-function calculateReward(maxStreak){ return maxStreak? 9*Math.pow(10,maxStreak-1) : 0; }
+// --- Reward Function ---
+function calculateReward(maxStreak){ return maxStreak? 9*Math.pow(10,maxStreak-1):0; }
 
-// Simulate Result Reveal (3 PM – 12 AM) for preview (fast)
+// --- Result Reveal (Simulated 1s per digit for demo) ---
 let finalResult = '';
 function startResultReveal(){
   if(userBets.length===0){ alert("Place bets first!"); return; }
   finalResult = '';
-  let digitCount=0;
+  let digitCount = 0;
   const interval = setInterval(()=>{
     if(digitCount>=10){ clearInterval(interval); showFinalWinnings(); return; }
     const digit = Math.floor(Math.random()*10);
@@ -133,17 +164,17 @@ function startResultReveal(){
     });
     updateDashboard();
     digitCount++;
-  }, 1000); // 1 sec per digit for preview, in real system -> 1 hr
+  }, 1000); // 1s per digit preview, real system 1hr
 }
 
-// Final Winnings
+// --- Final Winnings ---
 function showFinalWinnings(){
   const total = userBets.reduce((sum,b)=>sum+b.reward*b.amount,0);
   document.getElementById('final-winnings').innerText = `🎉 Total Winnings: ₹${total.toLocaleString()}`;
 }
 
-// Auto start result reveal after 3 PM IST (for preview just call manually)
-setTimeout(startResultReveal,0); // remove 0 in real, sync with 3PM IST
+// --- Auto start result reveal after 3PM IST (for preview just call immediately) ---
+setTimeout(startResultReveal,0); // remove 0 and sync with real 3PM IST
 </script>
 
 </body>
