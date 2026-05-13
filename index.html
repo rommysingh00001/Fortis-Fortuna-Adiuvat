@@ -3,43 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DBBA Casino Betting</title>
+<title>DBBA Casino Betting - Number Grid</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body { 
-  background: radial-gradient(circle, #0f0c29, #302b63, #24243e);
-  color:white; 
-  font-family:'Segoe UI', sans-serif; 
-}
-.card { 
-  background: rgba(0,0,0,0.7); 
-  border-radius:12px; 
-  padding:20px; 
-  margin:15px 0; 
-  box-shadow:0 0 20px rgba(255,255,255,0.2); 
-  backdrop-filter: blur(8px);
-}
-.btn { 
-  background: linear-gradient(90deg,#f59e0b,#fbbf24); 
-  color:#111; 
-  padding:10px 20px; 
-  border:none; 
-  border-radius:10px; 
-  cursor:pointer; 
-  font-weight:bold; 
-  font-size:1.1rem;
-  transition: transform 0.2s;
-}
+body { background: radial-gradient(circle, #0f0c29, #302b63, #24243e); color:white; font-family:'Segoe UI', sans-serif; }
+.card { background: rgba(0,0,0,0.7); border-radius:12px; padding:20px; margin:15px 0; box-shadow:0 0 20px rgba(255,255,255,0.2); backdrop-filter: blur(8px); }
+.btn { background: linear-gradient(90deg,#f59e0b,#fbbf24); color:#111; padding:10px 20px; border:none; border-radius:10px; cursor:pointer; font-weight:bold; font-size:1.1rem; transition: transform 0.2s; }
 .btn:hover { transform: scale(1.05); background: linear-gradient(90deg,#fbbf24,#f59e0b); }
-select, input { 
-  background:#222; 
-  color:white; 
-  border:none; 
-  border-radius:8px; 
-  padding:10px; 
-  font-family:monospace; 
-  font-size:1.1rem;
-}
+.number-grid { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+.number-cell { width:50px; height:50px; display:flex; justify-content:center; align-items:center; background:#222; border-radius:8px; cursor:pointer; font-size:1.3rem; font-weight:bold; transition: all 0.2s; }
+.number-cell.selected { background: #f59e0b; color:#111; transform: scale(1.2); }
 h1,h2 { text-shadow: 0 0 8px #f59e0b; }
 #result-display { font-size:2.5rem; letter-spacing:5px; text-shadow: 0 0 15px #f59e0b; }
 </style>
@@ -48,89 +21,86 @@ h1,h2 { text-shadow: 0 0 8px #f59e0b; }
 
 <h1 class="text-4xl font-bold text-center mb-6">🎰 DBBA Casino Betting 🎰</h1>
 
-<!-- Bet Amount -->
 <div class="card">
   <h2 class="text-2xl font-bold mb-2">Set Your Bet Amount</h2>
   <input type="number" id="bet-amount" placeholder="Enter amount for each bet" min="1">
 </div>
 
-<!-- Bets Selection -->
 <div class="card">
-  <h2 class="text-2xl font-bold mb-3">Choose 10 Bets (Digits 0-9)</h2>
-  <div id="bet-container" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+  <h2 class="text-2xl font-bold mb-2">Choose 10 Bets (Click a number 0-9)</h2>
+  <div id="bets-container" class="flex flex-wrap gap-5"></div>
 </div>
 
-<!-- Place Bets -->
 <div class="card">
   <button id="place-bets" class="btn w-full mb-2">Place All Bets</button>
   <div id="bet-status" class="text-yellow-400 font-bold text-lg"></div>
 </div>
 
-<!-- User Bets Dashboard -->
 <div class="card mt-4">
   <h2 class="text-2xl font-bold mb-2">Your Bets & Multipliers</h2>
   <div id="user-bets" class="flex flex-col gap-2"></div>
 </div>
 
-<!-- Result Reveal -->
 <div class="card mt-4">
   <h2 class="text-2xl font-bold mb-2">Live Result Reveal</h2>
   <div id="result-display">-</div>
 </div>
 
-<!-- Final Winnings -->
 <div class="card mt-4">
   <h2 class="text-2xl font-bold mb-2">Final Winnings</h2>
   <div id="final-winnings" class="text-xl font-bold text-green-400">-</div>
 </div>
 
 <script>
-// --- Generate 10 Select Inputs ---
-const betContainer = document.getElementById('bet-container');
-const betInputs = [];
-for(let i=1;i<=10;i++){
-  const sel = document.createElement('select');
-  sel.id = `bet-${i}`;
-  for(let d=0;d<=9;d++){
-    const opt = document.createElement('option');
-    opt.value = d;
-    opt.text = d;
-    sel.appendChild(opt);
+// --- Number Grid for 10 Bets ---
+const betsContainer = document.getElementById('bets-container');
+const userBets = [];
+for(let i=0;i<10;i++){
+  const betDiv = document.createElement('div');
+  betDiv.classList.add('flex','flex-col','items-center','gap-2');
+  const title = document.createElement('div'); title.innerText = `Bet #${i+1}`; betDiv.appendChild(title);
+  const grid = document.createElement('div'); grid.classList.add('number-grid');
+  for(let n=0;n<=9;n++){
+    const cell = document.createElement('div');
+    cell.classList.add('number-cell'); cell.innerText = n;
+    cell.addEventListener('click',()=>{
+      // Deselect all in this grid
+      Array.from(grid.children).forEach(c=>c.classList.remove('selected'));
+      cell.classList.add('selected');
+      userBets[i] = n.toString();
+    });
+    grid.appendChild(cell);
   }
-  betContainer.appendChild(sel);
-  betInputs.push(sel);
+  betDiv.appendChild(grid);
+  betsContainer.appendChild(betDiv);
 }
 
-// --- Store User Bets ---
-let userBets = [];
-
-// --- Betting Time Check (12AM-2PM IST) ---
+// --- Betting Time Check ---
 function isBettingOpen(){
   const now = new Date();
-  const utcOffset = 5.5*60; // IST +5:30
+  const utcOffset = 5.5*60;
   const istMinutes = now.getUTCMinutes() + now.getUTCHours()*60 + utcOffset;
   const istHours = Math.floor(istMinutes / 60) % 24;
-  return istHours >=0 && istHours <14; // 0-14 = 12AM-2PM
+  return istHours>=0 && istHours<14;
 }
 
 // --- Place Bets ---
-document.getElementById('place-bets').addEventListener('click', ()=>{
-  if(!isBettingOpen()){ 
-    document.getElementById('bet-status').innerText = "⚠ Betting Closed!"; 
-    return; 
-  }
+document.getElementById('place-bets').addEventListener('click',()=>{
+  if(!isBettingOpen()){ document.getElementById('bet-status').innerText="⚠ Betting Closed!"; return; }
   const amount = parseInt(document.getElementById('bet-amount').value);
-  if(isNaN(amount)||amount<=0){ alert("Enter valid bet amount"); return; }
-  userBets = betInputs.map((sel,i)=>({betNumber:sel.value, amount, betNo:i+1, maxStreak:0, reward:0}));
+  if(isNaN(amount)||amount<=0){ alert("Enter valid amount"); return; }
+  if(userBets.length<10 || userBets.some(x=>x===undefined)){ alert("Select all 10 bets!"); return; }
+
+  // Initialize bet objects
+  window.userBetsData = userBets.map((b,i)=>({betNumber:b,amount,maxStreak:0,reward:0,betNo:i+1}));
   updateDashboard();
-  document.getElementById('bet-status').innerText = "✅ Bets Placed!";
+  document.getElementById('bet-status').innerText="✅ Bets Placed!";
 });
 
-// --- Update User Dashboard ---
+// --- Update Dashboard ---
 function updateDashboard(){
-  const container = document.getElementById('user-bets');
-  container.innerHTML = '';
-  userBets.forEach(b=>{
+  const container = document.getElementById('user-bets'); container.innerHTML='';
+  window.userBetsData.forEach(b=>{
     container.innerHTML += `<div class="card flex justify-between items-center">
       <div><b>Bet #${b.betNo}</b></div>
       <div><b>Digit:</b> ${b.betNumber} | <b>Amount:</b> ₹${b.amount}</div>
@@ -142,40 +112,36 @@ function updateDashboard(){
 // --- Reward Function ---
 function calculateReward(maxStreak){ return maxStreak? 9*Math.pow(10,maxStreak-1):0; }
 
-// --- Result Reveal (Simulated 1s per digit for demo) ---
-let finalResult = '';
+// --- Result Reveal (Preview Simulation) ---
+let finalResult='';
 function startResultReveal(){
-  if(userBets.length===0){ alert("Place bets first!"); return; }
-  finalResult = '';
-  let digitCount = 0;
+  if(!window.userBetsData || window.userBetsData.length<10){ alert("Place bets first!"); return; }
+  finalResult=''; let digitCount=0;
   const interval = setInterval(()=>{
     if(digitCount>=10){ clearInterval(interval); showFinalWinnings(); return; }
-    const digit = Math.floor(Math.random()*10);
-    finalResult += digit;
-    document.getElementById('result-display').innerText = finalResult;
+    const digit=Math.floor(Math.random()*10);
+    finalResult+=digit;
+    document.getElementById('result-display').innerText=finalResult;
     // Update streaks
-    userBets.forEach(b=>{
-      let streak=0, maxStreak=0;
+    window.userBetsData.forEach(b=>{
+      let streak=0,maxStreak=0;
       for(let i=0;i<finalResult.length;i++){
         if(b.betNumber[i]===finalResult[i]){ streak++; maxStreak=Math.max(maxStreak,streak); } else { streak=0; }
       }
-      b.maxStreak = maxStreak;
-      b.reward = calculateReward(maxStreak);
+      b.maxStreak=maxStreak; b.reward=calculateReward(maxStreak);
     });
-    updateDashboard();
-    digitCount++;
-  }, 1000); // 1s per digit preview, real system 1hr
+    updateDashboard(); digitCount++;
+  }, 1000);
 }
 
 // --- Final Winnings ---
 function showFinalWinnings(){
-  const total = userBets.reduce((sum,b)=>sum+b.reward*b.amount,0);
-  document.getElementById('final-winnings').innerText = `🎉 Total Winnings: ₹${total.toLocaleString()}`;
+  const total = window.userBetsData.reduce((sum,b)=>sum.reward*b.amount,0);
+  document.getElementById('final-winnings').innerText=`🎉 Total Winnings: ₹${total.toLocaleString()}`;
 }
 
-// --- Auto start result reveal after 3PM IST (for preview just call immediately) ---
-setTimeout(startResultReveal,0); // remove 0 and sync with real 3PM IST
+// --- Auto start result reveal for preview ---
+setTimeout(startResultReveal,0);
 </script>
-
 </body>
 </html>
