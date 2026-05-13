@@ -1,614 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DBBA USER PANEL</title>
-
 <script src="https://cdn.tailwindcss.com"></script>
-
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-background:
-radial-gradient(circle at top,#312e81 0%,#0f172a 40%,#020617 100%);
-color:white;
-font-family:Arial,Helvetica,sans-serif;
-min-height:100vh;
-overflow-x:hidden;
-}
-
-.glow{
-text-shadow:
-0 0 10px #f59e0b,
-0 0 20px #f59e0b,
-0 0 40px #f59e0b;
-}
-
-.card{
-background:rgba(15,23,42,.75);
-border:1px solid rgba(255,255,255,.08);
-backdrop-filter:blur(14px);
-border-radius:25px;
-padding:25px;
-box-shadow:
-0 0 25px rgba(0,0,0,.5),
-0 0 15px rgba(245,158,11,.15);
-margin-bottom:25px;
-}
-
-.number-box{
-width:60px;
-height:60px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:16px;
-font-size:24px;
-font-weight:700;
-cursor:pointer;
-transition:.25s;
-background:#111827;
-border:2px solid transparent;
-user-select:none;
-}
-
-.number-box:hover{
-transform:scale(1.08);
-border-color:#f59e0b;
-box-shadow:0 0 15px #f59e0b;
-}
-
-.number-box.active{
-background:linear-gradient(135deg,#f59e0b,#fde047);
-color:#111827;
-transform:scale(1.12);
-box-shadow:
-0 0 20px #f59e0b,
-0 0 40px #f59e0b;
-}
-
-.slot-box{
-width:60px;
-height:60px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:16px;
-font-size:24px;
-font-weight:700;
-background:black;
-border:2px solid #f59e0b;
-}
-
-.result-tv{
-background:black;
-border-radius:25px;
-padding:25px;
-font-size:45px;
-font-weight:900;
-letter-spacing:10px;
-text-align:center;
-font-family:monospace;
-border:4px solid #f59e0b;
-box-shadow:
-0 0 20px #f59e0b,
-inset 0 0 20px rgba(245,158,11,.4);
-min-height:110px;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.bet-tv{
-background:black;
-border-radius:25px;
-padding:25px;
-font-size:55px;
-font-weight:900;
-letter-spacing:5px;
-text-align:center;
-font-family:monospace;
-border:4px solid #22c55e;
-box-shadow:
-0 0 20px #22c55e,
-inset 0 0 20px rgba(34,197,94,.4);
-min-height:110px;
-display:flex;
-align-items:center;
-justify-content:center;
-margin-bottom:15px;
-}
-
-.btn{
-background:linear-gradient(90deg,#f59e0b,#fde047);
-color:black;
-font-size:18px;
-font-weight:700;
-padding:16px 25px;
-border-radius:18px;
-width:100%;
-transition:.25s;
-cursor:pointer;
-border:none;
-}
-
-.btn:hover{
-transform:translateY(-2px) scale(1.02);
-box-shadow:0 0 20px #f59e0b;
-}
-
-.history-card{
-background:#0f172a;
-border-radius:18px;
-padding:18px;
-border:1px solid rgba(255,255,255,.08);
-margin-bottom:12px;
-}
-
-.win{
-color:#22c55e;
-font-weight:bold;
-}
-
-.loss{
-color:#ef4444;
-font-weight:bold;
-}
-
+body{background:#050816;color:white;font-family:sans-serif;padding:20px;}
+.glow{text-shadow:0 0 10px #f59e0b,0 0 20px #f59e0b,0 0 40px #f59e0b;}
+.card{background:rgba(15,23,42,.8);padding:20px;border-radius:20px;margin-bottom:20px;}
+.result-tv{background:black;padding:20px;font-size:40px;font-weight:900;text-align:center;border:3px solid #f59e0b;border-radius:20px;margin-bottom:10px;letter-spacing:10px;}
+.input-box{width:100%;padding:15px;font-size:24px;border-radius:15px;background:black;color:white;border:2px solid #f59e0b;outline:none;margin-bottom:15px;}
+.btn{background:linear-gradient(90deg,#f59e0b,#fde047);color:black;font-weight:700;padding:16px;border-radius:15px;width:100%;cursor:pointer;border:none;font-size:18px;}
+.btn:hover{box-shadow:0 0 20px #f59e0b;transform:scale(1.02);}
+.history-card{background:#0f172a;padding:15px;border-radius:15px;margin-bottom:10px;}
+.win{color:#22c55e;font-weight:bold;}
+.loss{color:#ef4444;font-weight:bold;}
 </style>
 </head>
+<body>
 
-<body class="p-5 md:p-10">
+<h1 class="text-4xl glow mb-5">🎰 DBBA USER PANEL 🎰</h1>
 
-<div class="max-w-6xl mx-auto">
-
-<h1 class="text-5xl md:text-6xl font-black text-center mb-8 glow">
-🎰 DBBA USER PANEL 🎰
-</h1>
-
-<!-- NUMBER GRID -->
+<!-- BET PLACEMENT -->
 <div class="card">
-
-<div class="text-3xl font-black mb-5 glow">
-SELECT 10 NUMBERS
+<h2 class="text-2xl glow mb-3">Place Your Bet</h2>
+<input type="text" id="userBetInput" class="input-box" maxlength="10" placeholder="Enter 10-digit Bet (0-9)">
+<input type="number" id="betAmount" class="input-box" placeholder="Enter Amount">
+<button id="placeBetBtn" class="btn">🚀 Place Bet</button>
 </div>
 
-<!-- SELECTED SLOTS -->
-<div id="slots"
-class="flex flex-wrap gap-3 mb-6">
-</div>
-
-<!-- NUMBER GRID -->
-<div id="number-grid"
-class="flex flex-wrap gap-3">
-</div>
-
-</div>
-
-<!-- BET AMOUNT -->
+<!-- LIVE RESULT DISPLAY -->
 <div class="card">
-
-<div class="text-3xl font-black mb-5 glow">
-BET AMOUNT
+<h2 class="text-2xl glow mb-3">Live Result</h2>
+<div id="resultTV" class="result-tv">----------</div>
 </div>
 
-<div id="bet-tv" class="bet-tv">
-₹0
-</div>
-
-<input
-type="number"
-id="betAmount"
-placeholder="Enter Amount"
-class="w-full bg-black border border-yellow-500 rounded-2xl p-5 text-2xl text-white outline-none"
-/>
-
-</div>
-
-<!-- PLACE BET -->
+<!-- REWARD DISPLAY -->
 <div class="card">
-
-<button id="placeBetBtn" class="btn">
-🚀 PLACE BET
-</button>
-
+<h2 class="text-2xl glow mb-3">Reward</h2>
+<div id="rewardTV" class="result-tv">Waiting for result...</div>
 </div>
 
-<!-- YOUR BET -->
+<!-- BET HISTORY -->
 <div class="card">
-
-<div class="text-3xl font-black mb-5 glow">
-YOUR BET
-</div>
-
-<div id="user-bet" class="result-tv">
-----------
-</div>
-
-</div>
-
-<!-- RESULT -->
-<div class="card">
-
-<div class="text-3xl font-black mb-5 glow">
-LIVE RESULT
-</div>
-
-<div id="result-tv" class="result-tv">
-----------
-</div>
-
-</div>
-
-<!-- REWARD -->
-<div class="card text-center">
-
-<div class="text-3xl font-black mb-5 glow">
-REWARD STATUS
-</div>
-
-<div id="reward-display"
-class="text-4xl font-black">
-Waiting Result...
-</div>
-
-</div>
-
-<!-- HISTORY -->
-<div class="card">
-
-<div class="text-3xl font-black mb-5 glow">
-BET HISTORY
-</div>
-
-<div id="bet-history"></div>
-
-</div>
-
+<h2 class="text-2xl glow mb-3">Bet History</h2>
+<div id="historyDiv"></div>
 </div>
 
 <script>
-
-// =======================
+// ==========================
 // VARIABLES
-// =======================
-
-let userBet = Array(10).fill(null);
-
+// ==========================
 let pendingBets = [];
 
-const slotsDiv = document.getElementById("slots");
+// Reward table based on max streak
+const rewardTable = {1:9,2:90,3:900,4:9000,5:90000,6:900000,7:9000000,8:90000000,9:900000000,10:9000000000};
 
-const numberGrid = document.getElementById("number-grid");
+// Load existing bet history from localStorage
+let storedHistory = JSON.parse(localStorage.getItem("dbba_user_history") || "[]");
+storedHistory.forEach(h => addHistory(h.bet,h.amount,h.status,h.reward));
 
-const userBetDisplay = document.getElementById("user-bet");
-
-const betTV = document.getElementById("bet-tv");
-
-const resultTV = document.getElementById("result-tv");
-
-const rewardDisplay = document.getElementById("reward-display");
-
-const betHistory = document.getElementById("bet-history");
-
-// =======================
-// CREATE 10 EMPTY SLOTS
-// =======================
-
-for(let i=0;i<10;i++){
-
-const slot = document.createElement("div");
-
-slot.className = "slot-box";
-
-slot.innerText = "-";
-
-slotsDiv.appendChild(slot);
-
-}
-
-// =======================
-// CREATE NUMBER GRID
-// =======================
-
-for(let i=0;i<=9;i++){
-
-const box = document.createElement("div");
-
-box.className = "number-box";
-
-box.innerText = i;
-
-box.onclick = ()=>{
-
-const emptyIndex =
-userBet.findIndex(x=>x===null);
-
-if(emptyIndex===-1) return;
-
-userBet[emptyIndex] = i;
-
-slotsDiv.children[emptyIndex].innerText = i;
-
-slotsDiv.children[emptyIndex]
-.classList.add("active");
-
-updateBetDisplay();
-
-};
-
-numberGrid.appendChild(box);
-
-}
-
-// =======================
-// UPDATE BET DISPLAY
-// =======================
-
-function updateBetDisplay(){
-
-userBetDisplay.innerText =
-userBet.map(x=>x===null?"-":x).join("");
-
-}
-
-// =======================
-// LIVE BET AMOUNT TV
-// =======================
-
-document.getElementById("betAmount")
-.addEventListener("input",(e)=>{
-
-betTV.innerText =
-"₹" + (e.target.value || 0);
-
-});
-
-// =======================
+// ==========================
 // PLACE BET
-// =======================
+// ==========================
+document.getElementById("placeBetBtn").onclick = ()=>{
+    const bet = document.getElementById("userBetInput").value.trim();
+    const amount = parseFloat(document.getElementById("betAmount").value);
+    
+    if(!/^\d{10}$/.test(bet)){
+        alert("Enter exactly 10 digits");
+        return;
+    }
+    if(!amount || amount<=0){
+        alert("Enter valid amount");
+        return;
+    }
 
-document.getElementById("placeBetBtn")
-.addEventListener("click",()=>{
+    pendingBets.push({bet, amount});
+    addHistory(bet, amount, "Pending", 0);
 
-const amount =
-parseFloat(document.getElementById("betAmount").value);
-
-if(userBet.includes(null)){
-
-alert("Please Select 10 Numbers");
-
-return;
-
-}
-
-if(!amount || amount<=0){
-
-alert("Enter Valid Amount");
-
-return;
-
-}
-
-const betString = userBet.join("");
-
-pendingBets.push({
-
-bet:betString,
-amount:amount
-
-});
-
-// SAVE HISTORY
-addHistory(
-betString,
-amount,
-"Pending",
-0
-);
-
-alert("✅ Bet Placed Successfully");
-
-resetPanel();
-
-});
-
-// =======================
-// RESET PANEL
-// =======================
-
-function resetPanel(){
-
-userBet = Array(10).fill(null);
-
-Array.from(slotsDiv.children)
-.forEach(slot=>{
-
-slot.innerText = "-";
-
-slot.classList.remove("active");
-
-});
-
-userBetDisplay.innerText = "----------";
-
-document.getElementById("betAmount").value = "";
-
-betTV.innerText = "₹0";
-
-}
-
-// =======================
-// ADD HISTORY
-// =======================
-
-function addHistory(bet,amount,status,reward){
-
-const div = document.createElement("div");
-
-div.className = "history-card";
-
-div.innerHTML = `
-
-<div class="flex justify-between mb-3">
-
-<div>
-<div class="opacity-70 text-sm">
-BET
-</div>
-
-<div class="text-2xl font-black">
-${bet}
-</div>
-</div>
-
-<div>
-<div class="opacity-70 text-sm">
-AMOUNT
-</div>
-
-<div class="text-2xl font-black">
-₹${amount}
-</div>
-</div>
-
-</div>
-
-<div class="flex justify-between">
-
-<div class="${status==='WIN'?'win':'loss'}">
-${status}
-</div>
-
-<div class="text-yellow-400 font-black">
-${reward}
-</div>
-
-</div>
-
-`;
-
-betHistory.prepend(div);
-
-}
-
-// =======================
-// ADMIN RESULT FUNCTION
-// =======================
-
-// ADMIN PANEL SE YEH CALL KARNA:
-// announceResult("9475938492");
-
-function announceResult(resultString){
-
-resultTV.innerText = resultString;
-
-const rewardTable = {
-
-1:9,
-2:90,
-3:900,
-4:9000,
-5:90000,
-6:900000,
-7:9000000,
-8:90000000,
-9:900000000,
-10:9000000000
-
+    document.getElementById("userBetInput").value="";
+    document.getElementById("betAmount").value="";
 };
 
-pendingBets.forEach(betObj=>{
+// ==========================
+// PROCESS RESULT
+// ==========================
+function processResult(result){
+    document.getElementById("resultTV").innerText = result;
 
-const bet = betObj.bet;
+    pendingBets.forEach(betObj=>{
+        const bet = betObj.bet;
+        const amount = betObj.amount;
 
-const amount = betObj.amount;
+        let streak=0, maxStreak=0;
+        for(let i=0;i<10;i++){
+            if(bet[i] === result[i]){
+                streak++;
+                maxStreak = Math.max(maxStreak, streak);
+            } else streak=0;
+        }
 
-let streak = 0;
+        const multiplier = rewardTable[maxStreak] || 0;
+        const winAmount = amount * multiplier;
+        const status = multiplier>0?"WIN":"LOSS";
 
-let maxStreak = 0;
+        addHistory(bet, amount, status, winAmount);
 
-// CONTINUOUS MATCH CHECK
-for(let i=0;i<10;i++){
+        // Update reward display (last winning streak)
+        if(multiplier>0){
+            document.getElementById("rewardTV").innerText = `🔥 ${maxStreak} MATCH STREAK\n🏆 Won ₹${winAmount}`;
+        } else {
+            document.getElementById("rewardTV").innerText = "❌ NO MATCH";
+        }
 
-if(bet[i] === resultString[i]){
+        // Save history in localStorage
+        storedHistory.push({bet, amount, status, reward:winAmount});
+        localStorage.setItem("dbba_user_history", JSON.stringify(storedHistory));
+    });
 
-streak++;
-
-maxStreak = Math.max(maxStreak,streak);
-
-}
-else{
-
-streak = 0;
-
-}
-
-}
-
-const multiplier =
-rewardTable[maxStreak] || 0;
-
-const winAmount =
-amount * multiplier;
-
-if(multiplier>0){
-
-rewardDisplay.innerHTML = `
-<div class="win">
-🔥 ${maxStreak} MATCH STREAK
-</div>
-
-<div class="mt-2">
-🏆 WON ₹${winAmount}
-</div>
-`;
-
-addHistory(
-bet,
-amount,
-"WIN",
-"₹"+winAmount
-);
-
-}
-else{
-
-rewardDisplay.innerHTML = `
-<div class="loss">
-❌ NO MATCH
-</div>
-`;
-
-addHistory(
-bet,
-amount,
-"LOSS",
-"₹0"
-);
-
+    pendingBets = [];
 }
 
-});
-
-// CLEAR ALL PENDING BETS
-pendingBets = [];
-
+// ==========================
+// HISTORY DISPLAY
+// ==========================
+function addHistory(bet, amount, status, reward){
+    const div = document.createElement("div");
+    div.className="history-card";
+    div.innerHTML=`
+        <div><strong>Bet:</strong> ${bet}</div>
+        <div><strong>Amount:</strong> ₹${amount}</div>
+        <div class="${status==="WIN"?"win":"loss"}"><strong>${status}:</strong> ${reward>0?"₹"+reward:"0"}</div>
+    `;
+    document.getElementById("historyDiv").prepend(div);
 }
 
-// =======================
-// DEMO MANUAL RESULT
-// =======================
-
-// Browser console me test:
-// announceResult("9475938492");
+// ==========================
+// POLLING LOCALSTORAGE FOR RESULT
+// ==========================
+setInterval(()=>{
+    const result = localStorage.getItem("dbba_result");
+    if(result && result.length===10){
+        processResult(result);
+    }
+}, 2000);
 
 </script>
 
