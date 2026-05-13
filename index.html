@@ -3,57 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DBBA Casino Betting - Number Grid</title>
+<title>DBBA Casino Betting - Full Demo</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body { background: radial-gradient(circle, #0f0c29, #302b63, #24243e); color:white; font-family:'Segoe UI', sans-serif; }
-.card { background: rgba(0,0,0,0.7); border-radius:12px; padding:20px; margin:15px 0; box-shadow:0 0 20px rgba(255,255,255,0.2); backdrop-filter: blur(8px); }
-.btn { background: linear-gradient(90deg,#f59e0b,#fbbf24); color:#111; padding:10px 20px; border:none; border-radius:10px; cursor:pointer; font-weight:bold; font-size:1.1rem; transition: transform 0.2s; }
+body { 
+  background: radial-gradient(circle, #0f0c29, #302b63, #24243e); 
+  color:white; 
+  font-family:'Segoe UI', sans-serif; 
+  overflow-x:hidden;
+}
+h1,h2 { text-shadow: 0 0 10px #f59e0b; }
+.card { background: rgba(0,0,0,0.75); border-radius:12px; padding:20px; margin:15px 0; box-shadow:0 0 20px rgba(255,255,255,0.2); backdrop-filter: blur(8px); }
+.btn { background: linear-gradient(90deg,#f59e0b,#fbbf24); color:#111; padding:12px 25px; border:none; border-radius:10px; cursor:pointer; font-weight:bold; font-size:1.2rem; transition: transform 0.2s; }
 .btn:hover { transform: scale(1.05); background: linear-gradient(90deg,#fbbf24,#f59e0b); }
-.number-grid { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-.number-cell { width:50px; height:50px; display:flex; justify-content:center; align-items:center; background:#222; border-radius:8px; cursor:pointer; font-size:1.3rem; font-weight:bold; transition: all 0.2s; }
-.number-cell.selected { background: #f59e0b; color:#111; transform: scale(1.2); }
-h1,h2 { text-shadow: 0 0 8px #f59e0b; }
-#result-display { font-size:2.5rem; letter-spacing:5px; text-shadow: 0 0 15px #f59e0b; }
+.number-grid { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; justify-content:center; }
+.number-cell { width:60px; height:60px; display:flex; justify-content:center; align-items:center; background:#222; border-radius:10px; cursor:pointer; font-size:1.5rem; font-weight:bold; transition: all 0.2s; color:#fff; }
+.number-cell.selected { background: #f59e0b; color:#111; transform: scale(1.2); box-shadow: 0 0 15px #fbbf24; }
+#tv-display { font-size:3rem; text-align:center; letter-spacing:10px; font-family:monospace; background: #111; padding:20px; border-radius:12px; box-shadow:0 0 30px #f59e0b; margin-bottom:20px; }
+#result-display { font-size:2.5rem; letter-spacing:5px; text-shadow: 0 0 15px #f59e0b; text-align:center; margin-top:20px;}
 </style>
 </head>
 <body class="p-6">
 
-<h1 class="text-4xl font-bold text-center mb-6">🎰 DBBA Casino Betting 🎰</h1>
+<h1 class="text-5xl text-center mb-4">🎰 DBBA Casino Betting 🎰</h1>
 
+<!-- Bet Amount Display -->
 <div class="card">
-  <h2 class="text-2xl font-bold mb-2">Set Your Bet Amount</h2>
-  <input type="number" id="bet-amount" placeholder="Enter amount for each bet" min="1">
+  <h2 class="text-3xl font-bold mb-2">Set Your Bet Amount</h2>
+  <input type="number" id="bet-amount" placeholder="Enter Bet Amount" min="1" class="w-full text-center text-2xl p-4 mb-2">
+  <div id="tv-display">₹ 0</div>
 </div>
 
+<!-- Number Grid Selection -->
 <div class="card">
-  <h2 class="text-2xl font-bold mb-2">Choose 10 Bets (Click a number 0-9)</h2>
-  <div id="bets-container" class="flex flex-wrap gap-5"></div>
+  <h2 class="text-3xl font-bold mb-2">Select 10 Bets (0-9)</h2>
+  <div id="bets-container" class="flex flex-wrap gap-5 justify-center"></div>
 </div>
 
+<!-- Place Bets -->
 <div class="card">
   <button id="place-bets" class="btn w-full mb-2">Place All Bets</button>
-  <div id="bet-status" class="text-yellow-400 font-bold text-lg"></div>
+  <div id="bet-status" class="text-yellow-400 font-bold text-lg text-center"></div>
 </div>
 
+<!-- User Bets Dashboard -->
 <div class="card mt-4">
-  <h2 class="text-2xl font-bold mb-2">Your Bets & Multipliers</h2>
+  <h2 class="text-3xl font-bold mb-2">Your Bets & Multipliers</h2>
   <div id="user-bets" class="flex flex-col gap-2"></div>
 </div>
 
+<!-- Live Result -->
 <div class="card mt-4">
-  <h2 class="text-2xl font-bold mb-2">Live Result Reveal</h2>
+  <h2 class="text-3xl font-bold mb-2">Live Result Reveal</h2>
   <div id="result-display">-</div>
 </div>
 
+<!-- Final Winnings -->
 <div class="card mt-4">
-  <h2 class="text-2xl font-bold mb-2">Final Winnings</h2>
-  <div id="final-winnings" class="text-xl font-bold text-green-400">-</div>
+  <h2 class="text-3xl font-bold mb-2">Final Winnings</h2>
+  <div id="final-winnings" class="text-2xl font-bold text-green-400">-</div>
 </div>
 
 <script>
-// --- Number Grid for 10 Bets ---
 const betsContainer = document.getElementById('bets-container');
+const tvDisplay = document.getElementById('tv-display');
+let betAmount = 0;
+
+// Update TV Display live
+document.getElementById('bet-amount').addEventListener('input',(e)=>{
+  betAmount = parseInt(e.target.value)||0;
+  tvDisplay.innerText = `₹ ${betAmount.toLocaleString()}`;
+});
+
+// --- Create 10 number grids ---
 const userBets = [];
 for(let i=0;i<10;i++){
   const betDiv = document.createElement('div');
@@ -62,12 +84,11 @@ for(let i=0;i<10;i++){
   const grid = document.createElement('div'); grid.classList.add('number-grid');
   for(let n=0;n<=9;n++){
     const cell = document.createElement('div');
-    cell.classList.add('number-cell'); cell.innerText = n;
+    cell.classList.add('number-cell'); cell.innerText=n;
     cell.addEventListener('click',()=>{
-      // Deselect all in this grid
       Array.from(grid.children).forEach(c=>c.classList.remove('selected'));
       cell.classList.add('selected');
-      userBets[i] = n.toString();
+      userBets[i]=n.toString();
     });
     grid.appendChild(cell);
   }
@@ -79,20 +100,18 @@ for(let i=0;i<10;i++){
 function isBettingOpen(){
   const now = new Date();
   const utcOffset = 5.5*60;
-  const istMinutes = now.getUTCMinutes() + now.getUTCHours()*60 + utcOffset;
-  const istHours = Math.floor(istMinutes / 60) % 24;
+  const istMinutes = now.getUTCMinutes()+now.getUTCHours()*60+utcOffset;
+  const istHours = Math.floor(istMinutes/60)%24;
   return istHours>=0 && istHours<14;
 }
 
 // --- Place Bets ---
+let userBetsData=[];
 document.getElementById('place-bets').addEventListener('click',()=>{
   if(!isBettingOpen()){ document.getElementById('bet-status').innerText="⚠ Betting Closed!"; return; }
-  const amount = parseInt(document.getElementById('bet-amount').value);
-  if(isNaN(amount)||amount<=0){ alert("Enter valid amount"); return; }
+  if(betAmount<=0){ alert("Enter valid bet amount"); return; }
   if(userBets.length<10 || userBets.some(x=>x===undefined)){ alert("Select all 10 bets!"); return; }
-
-  // Initialize bet objects
-  window.userBetsData = userBets.map((b,i)=>({betNumber:b,amount,maxStreak:0,reward:0,betNo:i+1}));
+  userBetsData = userBets.map((b,i)=>({betNumber:b,amount:betAmount,maxStreak:0,reward:0,betNo:i+1}));
   updateDashboard();
   document.getElementById('bet-status').innerText="✅ Bets Placed!";
 });
@@ -100,7 +119,7 @@ document.getElementById('place-bets').addEventListener('click',()=>{
 // --- Update Dashboard ---
 function updateDashboard(){
   const container = document.getElementById('user-bets'); container.innerHTML='';
-  window.userBetsData.forEach(b=>{
+  userBetsData.forEach(b=>{
     container.innerHTML += `<div class="card flex justify-between items-center">
       <div><b>Bet #${b.betNo}</b></div>
       <div><b>Digit:</b> ${b.betNumber} | <b>Amount:</b> ₹${b.amount}</div>
@@ -112,36 +131,39 @@ function updateDashboard(){
 // --- Reward Function ---
 function calculateReward(maxStreak){ return maxStreak? 9*Math.pow(10,maxStreak-1):0; }
 
-// --- Result Reveal (Preview Simulation) ---
+// --- Result Reveal (simulate real-time, manual admin can override) ---
 let finalResult='';
-function startResultReveal(){
-  if(!window.userBetsData || window.userBetsData.length<10){ alert("Place bets first!"); return; }
-  finalResult=''; let digitCount=0;
+function startResultReveal(simulatedResult=null){
+  if(userBetsData.length<10){ alert("Place bets first!"); return; }
+  finalResult='';
+  let digitCount=0;
   const interval = setInterval(()=>{
     if(digitCount>=10){ clearInterval(interval); showFinalWinnings(); return; }
-    const digit=Math.floor(Math.random()*10);
-    finalResult+=digit;
-    document.getElementById('result-display').innerText=finalResult;
+    const digit = simulatedResult ? simulatedResult[digitCount] : Math.floor(Math.random()*10);
+    finalResult += digit;
+    document.getElementById('result-display').innerText = finalResult;
     // Update streaks
-    window.userBetsData.forEach(b=>{
+    userBetsData.forEach(b=>{
       let streak=0,maxStreak=0;
       for(let i=0;i<finalResult.length;i++){
         if(b.betNumber[i]===finalResult[i]){ streak++; maxStreak=Math.max(maxStreak,streak); } else { streak=0; }
       }
       b.maxStreak=maxStreak; b.reward=calculateReward(maxStreak);
     });
-    updateDashboard(); digitCount++;
+    updateDashboard();
+    digitCount++;
   }, 1000);
 }
 
 // --- Final Winnings ---
 function showFinalWinnings(){
-  const total = window.userBetsData.reduce((sum,b)=>sum.reward*b.amount,0);
+  const total = userBetsData.reduce((sum,b)=>sum.reward*b.amount,0);
   document.getElementById('final-winnings').innerText=`🎉 Total Winnings: ₹${total.toLocaleString()}`;
 }
 
-// --- Auto start result reveal for preview ---
-setTimeout(startResultReveal,0);
+// --- Optional auto-start simulation for demo ---
+setTimeout(()=>{ startResultReveal(); }, 2000);
+
 </script>
 </body>
 </html>
