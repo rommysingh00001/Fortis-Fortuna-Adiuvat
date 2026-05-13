@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Betting Demo</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="supabase_config.js"></script>
+</head>
+<body>
+  <h1>Live Betting Demo</h1>
+
+  <div id="bet-form">
+    <input type="text" id="bet-number" placeholder="Enter 10-digit number" maxlength="10">
+    <input type="number" id="bet-amount" placeholder="Amount">
+    <button onclick="placeBet()">Place Bet</button>
+  </div>
+
+  <h2>Live Result</h2>
+  <div id="live-result">Waiting for first reveal...</div>
+
+  <h2>Your Bets</h2>
+  <div id="user-bets"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
