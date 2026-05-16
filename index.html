@@ -4,8 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>Moneyland Corporation | Commitment Creates Confidence</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -24,152 +22,167 @@ color:#fff;
 overflow-x:hidden;
 }
 
-/* REPLACE OLD HEADER CSS WITH THIS */
+/* =========================
+HEADER
+========================= */
 
 header{
 position:fixed;
 top:0;
 left:0;
 width:100%;
-padding:18px 70px;
+padding:18px 60px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-background:rgba(5,5,5,0.92);
-backdrop-filter:blur(14px);
+background:rgba(0,0,0,0.85);
+backdrop-filter:blur(10px);
 z-index:1000;
-transition:0.4s ease;
+transition:0.3s;
 border-bottom:1px solid rgba(255,255,255,0.05);
 }
 
 header.sticky{
-padding:14px 70px;
-background:#000;
-box-shadow:0 10px 30px rgba(0,0,0,0.45);
+box-shadow:0 5px 20px rgba(0,0,0,0.5);
 }
 
 .logo-box{
 display:flex;
 align-items:center;
+gap:15px;
 }
 
 .logo-box img{
-height:68px;
+height:60px;
 width:auto;
 object-fit:contain;
-transition:0.3s;
-filter:drop-shadow(0 0 12px rgba(155,89,182,0.35));
 }
 
-.logo-box img:hover{
-transform:scale(1.05);
+.logo-text h2{
+font-size:22px;
+font-weight:700;
+color:#fff;
+line-height:1;
+}
+
+.logo-text p{
+font-size:12px;
+color:#9b59b6;
+margin-top:4px;
+letter-spacing:1px;
 }
 
 nav{
 display:flex;
 align-items:center;
-gap:34px;
+gap:28px;
 }
 
 nav a{
-position:relative;
-font-size:15px;
-font-weight:500;
 color:#fff;
 text-decoration:none;
-transition:0.3s ease;
-letter-spacing:0.3px;
+font-size:15px;
+font-weight:500;
+transition:0.3s;
+position:relative;
 }
 
 nav a:hover{
-color:#b56cff;
+color:#9b59b6;
 }
 
 nav a::after{
 content:"";
 position:absolute;
 left:0;
-bottom:-8px;
+bottom:-6px;
 width:0%;
 height:2px;
 background:#9b59b6;
-border-radius:20px;
-transition:0.35s ease;
+transition:0.3s;
 }
 
 nav a:hover::after{
 width:100%;
 }
 
-.header-right{
-display:flex;
-align-items:center;
-gap:15px;
-}
-
 .call-btn{
-background:linear-gradient(135deg,#9b59b6,#6c2bd9);
-padding:13px 22px;
-border-radius:12px;
+background:#9b59b6;
+padding:12px 20px;
+border-radius:8px;
 color:#fff;
 font-size:14px;
 font-weight:600;
 text-decoration:none;
-transition:0.3s ease;
-box-shadow:0 8px 20px rgba(155,89,182,0.25);
-}
-
-.call-btn:hover{
-transform:translateY(-3px);
-box-shadow:0 12px 25px rgba(155,89,182,0.45);
-}
-
-.menu-btn{
-display:none;
-background:#111;
-border:1px solid rgba(255,255,255,0.08);
-color:#fff;
-width:45px;
-height:45px;
-border-radius:12px;
-font-size:20px;
-cursor:pointer;
 transition:0.3s;
 }
 
-.menu-btn:hover{
-background:#9b59b6;
+.call-btn:hover{
+background:#7d3c98;
+transform:translateY(-2px);
 }
 
-/* MOBILE */
+/* =========================
+HERO
+========================= */
 
-@media(max-width:1000px){
-
-header{
-padding:18px 20px;
+.hero{
+height:100vh;
+position:relative;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
 }
 
-header.sticky{
-padding:14px 20px;
+.hero-slide{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background-size:cover;
+background-position:center;
+opacity:0;
+transition:1s ease;
 }
 
-nav{
-display:none;
+.hero-slide.active{
+opacity:1;
 }
 
-.menu-btn{
-display:block;
+.hero-overlay{
+position:absolute;
+width:100%;
+height:100%;
+background:linear-gradient(to right, rgba(0,0,0,0.85), rgba(0,0,0,0.45));
+z-index:1;
 }
 
-.logo-box img{
-height:58px;
+.hero-content{
+position:relative;
+z-index:2;
+max-width:1000px;
+padding:20px;
+animation:fadeUp 1.2s ease;
 }
 
-.call-btn{
-padding:11px 16px;
-font-size:13px;
+.hero-content h1{
+font-size:65px;
+line-height:1.1;
+margin-bottom:25px;
+font-weight:700;
 }
 
+.hero-content h1 span{
+color:#9b59b6;
+}
+
+.hero-content p{
+font-size:18px;
+color:#ddd;
+margin-bottom:35px;
 }
 
 /* =========================
@@ -519,8 +532,6 @@ width:100%;
 <img src="assets/logo.jpg" alt="Moneyland Logo">
 
 <div class="logo-text">
-<h2>Moneyland Corporation</h2>
-<p>COMMITMENT CREATES CONFIDENCE</p>
 </div>
 </div>
 
@@ -647,7 +658,7 @@ Smart investment opportunities in Gurgaon’s top projects.
 <h3>DLF The Camellias</h3>
 <p>Sector 42, Gurgaon</p>
 <p>Luxury 4BHK Apartment</p>
-<div class="price">₹ 90 Cr</div>
+<div class="price">₹ 45 Cr</div>
 </div>
 </div>
 
@@ -658,7 +669,7 @@ Smart investment opportunities in Gurgaon’s top projects.
 <h3>M3M Golf Estate</h3>
 <p>Sector 65, Gurgaon</p>
 <p>Premium Golf Residences</p>
-<div class="price">₹ 10 Cr</div>
+<div class="price">₹ 18.5 Cr</div>
 </div>
 </div>
 
@@ -666,9 +677,9 @@ Smart investment opportunities in Gurgaon’s top projects.
 <img src="assets/property3.jpg">
 
 <div class="property-content">
-<h3>Ameya Sapphire 57</h3>
-<p>Sector 57, Gurgaon</p>
-<p>Commercial Shops and Showrooms</p>
+<h3>Elan Empire</h3>
+<p>Sector 66, Gurgaon</p>
+<p>Commercial Office Space</p>
 <div class="price">₹ 3.25 Cr</div>
 </div>
 </div>
