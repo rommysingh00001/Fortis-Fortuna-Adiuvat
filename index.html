@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" type="image/jpg" href="assets/logo.jpg">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
@@ -25,21 +25,90 @@ overflow-x:hidden;
 /* =========================
 HEADER
 ========================= */
-
 header{
 position:fixed;
 top:0;
 left:0;
 width:100%;
-padding:18px 60px;
+padding:16px 70px;
 display:flex;
 justify-content:space-between;
 align-items:center;
-background:rgba(0,0,0,0.85);
-backdrop-filter:blur(10px);
+background:rgba(5,5,5,0.92);
+backdrop-filter:blur(14px);
 z-index:1000;
-transition:0.3s;
+transition:0.4s ease;
 border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+header.sticky{
+background:#000;
+padding:14px 70px;
+box-shadow:0 10px 30px rgba(0,0,0,0.45);
+}
+
+.logo-box img{
+height:70px;
+width:auto;
+object-fit:contain;
+transition:0.3s;
+filter:drop-shadow(0 0 14px rgba(155,89,182,0.35));
+}
+
+.logo-box img:hover{
+transform:scale(1.06);
+}
+
+nav{
+display:flex;
+align-items:center;
+gap:34px;
+}
+
+nav a{
+position:relative;
+font-size:15px;
+font-weight:500;
+color:#fff;
+text-decoration:none;
+transition:0.3s ease;
+letter-spacing:0.3px;
+}
+
+nav a:hover{
+color:#b56cff;
+}
+
+nav a::after{
+content:"";
+position:absolute;
+left:0;
+bottom:-8px;
+width:0%;
+height:2px;
+background:#9b59b6;
+transition:0.3s ease;
+}
+
+nav a:hover::after{
+width:100%;
+}
+
+.call-btn{
+background:linear-gradient(135deg,#9b59b6,#6c2bd9);
+padding:13px 22px;
+border-radius:12px;
+color:#fff;
+font-size:14px;
+font-weight:600;
+text-decoration:none;
+transition:0.3s ease;
+box-shadow:0 8px 20px rgba(155,89,182,0.25);
+}
+
+.call-btn:hover{
+transform:translateY(-3px);
+box-shadow:0 12px 25px rgba(155,89,182,0.45);
 }
 
 header.sticky{
